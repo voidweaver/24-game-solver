@@ -3,21 +3,24 @@
 from decimal import Decimal
 import time
 import argparse
+import sys
 
 
 def longer_indent_formatter(prog):
     return argparse.RawTextHelpFormatter(prog, max_help_position=32)
 
 
-parser = argparse.ArgumentParser(
-    description='Find a solution to construct the target number using the given numbers',
-    formatter_class=longer_indent_formatter)
-parser.add_argument('numbers', metavar='N', type=float, nargs=4, help="numbers to construct from")
-parser.add_argument('-t', '--target', metavar='target', type=float, nargs=1,
-                    help="target number to achieve (default: %(default)s)", default=[24])
-parser.add_argument('-n', '--limit', metavar='limit', type=int, nargs=1,
-                    help="number of solutions to show (default: all)", default=[None])
-arguments = parser.parse_args()
+if len(sys.argv) > 1:
+    parser = argparse.ArgumentParser(
+        description='Find a solution to construct the target number using the given numbers',
+        formatter_class=longer_indent_formatter)
+    parser.add_argument('numbers', metavar='N', type=float, nargs=4,
+                        help="numbers to construct from", default=[None])
+    parser.add_argument('-t', '--target', metavar='target', type=float, nargs=1,
+                        help="target number to achieve (default: %(default)s)", default=[24])
+    parser.add_argument('-n', '--limit', metavar='limit', type=int, nargs=1,
+                        help="number of solutions to show (default: all)", default=[None])
+    arguments = parser.parse_args()
 
 OPS = [' + ', ' - ', ' * ', ' / ']
 
@@ -188,11 +191,29 @@ def abs(n):
 
 
 def main():
-    args = vars(arguments)
+    try:
+        arguments
+    except NameError:
+        user_input = input("Enter numbers: ").split(' ')
+        target = input("Number to construct (default: 24): ")
+        if target == '':
+            target = 24
+        else:
+            target = Decimal(target)
+        output_limit = input("Solutions to show (default: all): ")
+        if output_limit == '':
+            output_limit = None
+        else:
+            output_limit = int(output_limit)
+        pause = True
+    else:
+        args = vars(arguments)
 
-    user_input = args['numbers']
-    output_limit = args['limit'][0]
-    target = Decimal(args['target'][0])
+        user_input = args['numbers']
+        output_limit = args['limit'][0]
+        target = Decimal(args['target'][0])
+
+        pause = False
 
     for i in range(len(user_input)):
         user_input[i] = Decimal(user_input[i])
@@ -223,6 +244,9 @@ def main():
         print("No solutions found")
 
     print("Time taken: " + str(time.process_time()))
+
+    if pause:
+        input("Press enter to continue...")
 
 
 main()
