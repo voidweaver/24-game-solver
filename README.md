@@ -20,4 +20,4 @@ And, in order to run it without having to type python every time (optional);
 2. Then, you can run it by
    ```
    $ ./24-game-solver.py
-   ``
+   ```
